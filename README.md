@@ -40,6 +40,17 @@ cp -r x-post-reader ~/.agents/skills/
 cp -r x-post-reader ~/.agents/skills/
 ```
 
+## MCP server
+
+Also ships as an MCP server (`mcp/server.py`) so MCP clients call the same
+capabilities as native tools instead of running a script. See
+[mcp/README.md](mcp/README.md) for install and client config (Claude Desktop,
+Codex, Cursor, …).
+
+```bash
+pip install "mcp<2"
+```
+
 ## Limitations (honest)
 
 - **Read-only** — can't post, like, follow.
