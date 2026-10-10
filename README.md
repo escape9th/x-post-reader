@@ -1,32 +1,33 @@
 # x-post-reader
 
-A drop-in agent skill for **reading X/Twitter posts** without an API key, login,
-or paid plan — plus optional keyword search when you have a key.
+A drop-in agent skill that lets your agent **read and browse X/Twitter** — no API
+key, no login, no paid plan.
 
-> 一个给 Claude Code / Codex / DSH 等 agent 用的技能：**无 key、无登录读取 X/Twitter 推文**（含长文 X Article），可选关键词搜索。
+> 让你的 Claude Code / Codex / dsh **逛推特**：读推文、看评论、翻时间线、查热门、搜帖子，全部免费、无需登录。
 
-## Why
+## What it can do (all free, no key)
 
-Fetching `x.com` directly fails: the page is a JavaScript shell that needs login,
-and a plain HTTP client gets nothing (or, in mainland China, the host is
-unreachable). This skill routes around that with public JSON mirror APIs that
-return the full post — text, author, engagement, media, and the complete body of
-long-form posts (X Articles).
+| Capability | Command |
+|---|---|
+| Read a post (full detail, incl. long-form X Article) | `xpost.py tweet <url-or-id>` |
+| Unroll a thread | `xpost.py thread <url-or-id>` |
+| Read the **comments / replies** | `xpost.py replies <url-or-id>` |
+| A user's recent posts (timeline) | `xpost.py timeline <handle>` |
+| Posts with media | `xpost.py media <handle>` |
+| Followers / following | `xpost.py followers\|following <handle>` |
+| Profile | `xpost.py user <handle>` |
+| Trending topics | `xpost.py trending` |
+| Search posts / people | `xpost.py search\|search-users <query>` |
+| Batch-hydrate many URLs | `xpost.py batch urls.txt` |
 
-## What it can do
+## How it works
 
-| Capability | Free | How |
-|---|---|---|
-| Read a post by URL or id | ✅ | `api.fxtwitter.com/<user>/status/<id>` |
-| Full text of long-form posts | ✅ | included in the fxtwitter JSON |
-| User profile | ✅ | `api.fxtwitter.com/<user>` |
-| Batch-hydrate many URLs | ✅ | bundled script |
-| Keyword search | 🔑 | needs an X API v2 bearer (or third-party) |
-| Replies / comments | ❌ | not available without login |
+The script hits the free **FxEmbed (fxtwitter)** API v2 (`https://api.fxtwitter.com/2`)
+plus the v1 endpoint for full single-post detail (media, views, X Article body).
+No dependencies — Python 3 standard library only. `HTTP_PROXY`/`HTTPS_PROXY` (and
+the Windows system proxy) are honoured automatically.
 
 ## Install
-
-Copy the repo into your agent's skills directory:
 
 ```bash
 # Claude Code
@@ -39,38 +40,14 @@ cp -r x-post-reader ~/.agents/skills/
 cp -r x-post-reader ~/.agents/skills/
 ```
 
-Or install via your agent's skill-install command. The `SKILL.md` carries the
-`name`/`description` frontmatter every agent reads when deciding what to load.
-
-## Usage
-
-```bash
-python scripts/xpost.py tweet https://x.com/yaohui12138/status/2097151445883899913
-python scripts/xpost.py tweet 2104912748794589515          # bare id works too
-python scripts/xpost.py user xilo2991
-python scripts/xpost.py batch urls.txt
-python scripts/xpost.py search "AI agent" --bearer $X_BEARER_TOKEN
-```
-
-No dependencies — Python 3 standard library only. `HTTP_PROXY` / `HTTPS_PROXY`
-(and the Windows system proxy) are honoured automatically.
-
-## How it works
-
-1. Parse the tweet handle + id out of any `x.com` / `twitter.com` URL (or accept
-   a bare id).
-2. Try the mirror APIs in order: fxtwitter → vxtwitter → Twitter's official
-   syndication endpoint.
-3. Normalise and print the result as Markdown, or `--json` for machine reading.
-
 ## Limitations (honest)
 
-- **No replies/comments** — X requires login for those; this is not fixable
-  from a public API.
-- **No free keyword search** — X removed unauthenticated search; nitter is dead;
-  Chinese search engines ignore `site:x.com`. Search needs a paid/authenticated
-  key.
-- Mirror APIs are free and rate-limited; engagement numbers are snapshots.
+- **Read-only** — can't post, like, follow.
+- **Search is shallow** — the free search endpoint often returns empty/404; it's
+  best-effort, not a complete index. For a specific post, always prefer reading by
+  URL/id.
+- **No DM / private content** — only public posts.
+- Mirror APIs are free and rate-limited (~1000 req/min); counts are snapshots.
 
 ## License
 
