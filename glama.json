@@ -1,0 +1,22 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "escape9th"
+  ],
+  "name": "x-post-reader",
+  "description": "Browse X/Twitter without login or an API key: read posts (including long-form X Articles), replies and comments, unroll threads, list a user's timeline, followers and following, see trending topics, and search posts.",
+  "keywords": [
+    "twitter",
+    "x",
+    "tweets",
+    "social-media",
+    "mcp",
+    "agent-skill",
+    "claude-code",
+    "codex",
+    "web-scraping",
+    "twitter-api",
+    "twitter-search",
+    "no-login"
+  ]
+}
